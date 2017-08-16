@@ -1,4 +1,4 @@
-function [ fids_common ] = fidCirclesCommon(density, radius, T2, omega, gammaG, t)
+function [ fids_common ] = fidCirclesCommon(density, radius, T2, omega, gammaG, t, TE)
 %FIDCIRCLE Summary of this function goes here
 %   density: the densities of circles
 %   radius: the radii of circles in meter
@@ -16,7 +16,7 @@ integral = repmat( denrad(:)', [length(t), 1]) .* ( besselj(0, x) + besselj(2, x
 
 phaseOmega = exp( -1i * t(:) * (omega(:)') );
 
-decayT2 = exp( - t(:) ./ (T2(:)') );
+decayT2 = exp( - ( t(:) + TE ) ./ (T2(:)') );
 
 fids_common = integral .* phaseOmega .* decayT2;
 

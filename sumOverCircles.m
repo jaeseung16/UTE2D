@@ -1,4 +1,4 @@
-function [ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG, t, nProj )
+function [ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG, t, nProj, TE )
 %SUMOVERCIRCLES Summary of this function goes here
 %   location: the locations of circles in (r, theta)
 %   density: the densities of circles
@@ -9,7 +9,7 @@ function [ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG,
 %   t: time, a vector
 % 
 
-fids_common = fidCirclesCommon(density, radius, T2, omega, gammaG, t);
+fids_common = fidCirclesCommon(density, radius, T2, omega, gammaG, t, TE);
 
 r0 = location(:,1);
 theta0 = location(:,2);

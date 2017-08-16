@@ -78,12 +78,12 @@ classdef ReconRadial2D
             ser2 = obj.ser - repmat( mean(obj.ser(:,fid_DC:end),2) , [1, obj.nFid]);
             
             first = 1;
-            Nfid = 448;
+            Nfid = 448*2;
 
             s = obj.ser(:,first:(Nfid+first-1))';
             s = s(:);
             
-            nx = 256;
+            nx = 512;
             kr = pi*(0:(Nfid-1))'/ (Nfid);
  
             [ kx, ky ] = obj.traj_radial_2D( obj.nProj, kr );

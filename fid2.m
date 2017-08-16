@@ -1,7 +1,7 @@
 gyro = 2 * pi * 42.6; % 42.6 MHz/T
 R = 0.0025; % sample radius = 2.5 mm
 
-N = 512; % data size
+N = 1024; % data size
 
 dw = 5; % dwell time in us
 
@@ -25,16 +25,18 @@ density = ones( length(X(:)), 1 );
 T2 = repmat( [1000, 100, 10, 1, 0.1] * 1000, [5, 1]);
 T2 = T2(:);
 
+TE = 0; % in us
+
 nProj=512;
 
 %%
-[ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG, t, nProj );
+[ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG, t, nProj, TE );
 UTE2D = ReconRadial2D( fid' );
 UTE2D = UTE2D.recon2D
 
 %%
-n = 256;
-dk = gyro * G * dw * 448 / n;
+n = 512;
+dk = gyro * G * dw * 448 * 2 / n;
 dx = pi / dk / n;
 dy = dx;
 
