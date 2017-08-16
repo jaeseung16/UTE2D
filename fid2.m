@@ -18,25 +18,10 @@ gammaG = gyro * G;
 location = [0.015 * sqrt(X(:).^2 + Y(:).^2), atan2(Y(:), X(:))];
 
 %%
+n = 256;
+Nfid = 448;
 
-omega = repmat( 2 * pi * [-0.0014; -0.0007; 0; 0.0007; 0.0014], [5, 1] );
-radius = R * ones( length(X(:)), 1 );
-density = ones( length(X(:)), 1 );
-T2 = repmat( [1000, 100, 10, 1, 0.1] * 1000, [5, 1]);
-T2 = T2(:);
-
-TE = 0; % in us
-
-nProj=512;
-
-%%
-[ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG, t, nProj, TE );
-UTE2D = ReconRadial2D( fid' );
-UTE2D = UTE2D.recon2D
-
-%%
-n = 512;
-dk = gyro * G * dw * 448 * 2 / n;
+dk = gyro * G * dw * Nfid / n;
 dx = pi / dk / n;
 dy = dx;
 
@@ -59,6 +44,28 @@ for k = 1:n
        
     end
 end
+
+%%
+
+omega = repmat( 2 * pi * [-0.0014; -0.0007; 0; 0.0007; 0.0014], [5, 1] );
+radius = R * ones( length(X(:)), 1 );
+density = ones( length(X(:)), 1 );
+T2 = repmat( [1000, 100, 10, 1, 0.1] * 1000, [5, 1]);
+T2 = T2(:);
+
+TE = 200; % in us
+
+nProj=512;
+
+%%
+[ fid ] = sumOverCircles( location, density, radius, T2, omega, gammaG, t, nProj, TE );
+
+%%
+UTE2D = ReconRadial2D( fid' );
+
+first = 1;
+
+UTE2D = UTE2D.recon2D2( first, Nfid, n);
 
             
 %%

@@ -159,6 +159,67 @@ classdef ReconRadial2D
             obj.rho2 = rho4c;
 
         end
+        
+        function obj = recon2D2(obj, first, Nfid, nx)
+            tolNUFFT = 1e-6;
+            
+            fid_DC = obj.nFid - 20;
+            ser2 = obj.ser - repmat( mean(obj.ser(:,fid_DC:end),2) , [1, obj.nFid]);
+
+            s = obj.ser(:,first:(Nfid+first-1))';
+            s = s(:);
+            
+            kr = pi*(0:(Nfid-1))'/ (Nfid);
+ 
+            [ kx, ky ] = obj.traj_radial_2D( obj.nProj, kr );
+            
+            figure
+            scatter3(kx,ky,abs(s),1)
+            
+            flag = 0;
+            [ wk1, wk2 ] = obj.density_radial_2d( obj.nProj, kr, flag );
+            wk1 = wk1/max(wk1(:));
+            wk2 = wk2/max(wk2(:));
+            
+            tic 
+            rho2 = nufft2d1(obj.nProj * Nfid, kx, ky, wk2 .* s, -1, tolNUFFT, nx, nx);
+            toc
+            
+            wk3 = nufft2d1(obj.nProj * Nfid, kx, ky, wk1, -1, tolNUFFT, nx, nx);
+            
+            figure
+            imagesc(real(abs(rho2)))
+            axis image
+            
+            figure
+            mesh(abs(rho2))
+           
+            rho3 = fft2(fftshift(rho2));
+            wk5 = fft2(fftshift(wk3));
+            
+            % Deconvolution of the density weights
+            
+            wmax = 0.001 * abs(wk5(1,1));
+            toss = find( abs(wk5) <= wmax );
+            keep = find( abs(wk5) > wmax );
+            
+            wk7(toss) = 0.0;
+            wk7(keep) = 1./wk5(keep);
+            wk7 = reshape(wk7, [nx, nx]);
+            
+            rho4 = fftshift(ifft2(rho3.*wk7));
+
+            figure
+            mesh(abs(rho4))
+            
+            figure
+            imagesc(abs(rho4))
+            axis image
+
+            obj.rho_nocorrection = rho2;
+            obj.rho = rho4;
+
+        end
     end
 
 end
